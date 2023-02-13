@@ -2,6 +2,7 @@
 
 require_relative 'colorize'
 
+# used to display board, includes values for each field of the board
 class Board
   attr_accessor :values
 
