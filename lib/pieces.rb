@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 require_relative 'pieces_classes/pieces_unicode'
 
 class Piece
   include PiecesUnicode
 
   attr_reader :color, :move_directions, :symbol, :unlimited_move
-
 end
 
 require_relative 'pieces_classes/pawn'

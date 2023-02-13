@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../pieces'
 
 class Pawn < Piece
@@ -8,11 +10,11 @@ class Pawn < Piece
     create_move_direction
   end
 
-def create_move_direction
-    if color == :black
-      @move_directions = [[-1, 0]]
-    else
-      @move_directions = [[1, 0]]
-    end
+  def create_move_direction
+    @move_directions = if color == :black
+                         [[-1, 0]]
+                       else
+                         [[1, 0]]
+                       end
   end
 end

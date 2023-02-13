@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'colorize'
 
 class Board
@@ -26,24 +28,23 @@ class Board
   def print_cell(cell)
     if (cell[0][0].even? && cell[0][1].odd?) || (cell[0][0].odd? && cell[0][1].even?)
       if !cell[1].nil?
-        print "#{cell[1].symbol}".brown_bg
+        print cell[1].symbol.to_s.brown_bg
       else
         print '   '.brown_bg
       end
     elsif !cell[1].nil?
-      print "#{cell[1].symbol}".gray_bg
+      print cell[1].symbol.to_s.gray_bg
     else
       print '   '.gray_bg
     end
   end
 
   def initialize_values
-    @values = Hash.new
+    @values = {}
     (1..8).to_a.each do |i|
       (1..8).to_a.each do |j|
-          @values[[i, j]] = nil
+        @values[[i, j]] = nil
       end
     end
   end
 end
-

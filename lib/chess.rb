@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'board'
 require_relative 'player'
 require_relative 'pieces'
@@ -23,28 +25,28 @@ class Chess
   end
 
   def initialize_pawns
-    for i in 1..8 do
+    (1..8).each do |i|
       board.values[[7, i]] = Pawn.new(:black)
       board.values[[2, i]] = Pawn.new(:white)
     end
   end
 
   def initialize_bishops
-    for i in [3, 6] do
+    [3, 6].each do |i|
       board.values[[8, i]] = Bishop.new(:black)
       board.values[[1, i]] = Bishop.new(:white)
     end
   end
 
   def initialize_knights
-    for i in [2, 7] do
+    [2, 7].each do |i|
       board.values[[8, i]] = Knight.new(:black)
       board.values[[1, i]] = Knight.new(:white)
     end
   end
 
   def initialize_rooks
-    for i in [1, 8] do
+    [1, 8].each do |i|
       board.values[[8, i]] = Rook.new(:black)
       board.values[[1, i]] = Rook.new(:white)
     end

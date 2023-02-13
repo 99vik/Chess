@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class String
   # colorization
   def colorize(color_code)
@@ -19,7 +21,7 @@ class String
   def brown
     colorize(33)
   end
-    
+
   def black
     colorize(30)
   end
