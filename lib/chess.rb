@@ -8,7 +8,7 @@ require_relative 'game_messages'
 # main class for the chess game, unifies all other classes to make working game
 class Chess
   include GameMessages
-  attr_reader :board, :current_player
+  attr_reader :board, :current_player, :opponent
 
   # game initialization
 
@@ -17,7 +17,9 @@ class Chess
     @player_black = Player.new(:black)
     @player_white = Player.new(:white)
     @current_player = @player_white
+    @opponent = @player_black
     initialize_board_values
+    initialize_players_pieces
   end
  
   def initialize_board_values
@@ -74,16 +76,38 @@ class Chess
       board.draw_board
       display_current_player_move
       player_move
-      switch_player
+      # switch_player
+      puts "White"
+      p current_player.pieces
+      puts "Black"
+      p opponent.pieces
     end
   end
 
   def switch_player
     if current_player.eql?(@player_black)
       @current_player = @player_white
+      @opponent = @player_black
     else
       @current_player = @player_black
+      @opponent = @player_white
     end
+  end
+
+  # player pieces 
+
+  def initialize_players_pieces
+    board.values.select { |key, value| !value.nil? }
+                .select { |key, value| value.color == :white }
+                .each { |key, value| current_player.pieces << value }
+    
+    board.values.select { |key, value| !value.nil? }
+                .select { |key, value| value.color == :black }
+                .each { |key, value| opponent.pieces << value }
+  end
+
+  def remove_piece_from_player(field)
+    opponent.pieces.delete(board.values[field])
   end
 
   # player moves
@@ -91,7 +115,12 @@ class Chess
   def player_move
     move = format_input(input_move)
     return player_move if invalid_move?(move)
+    remove_piece_from_player(move[1]) if opponents_piece_on_field?(move[1])
     move_piece(move)
+  end
+
+  def attack_move?(field)
+
   end
 
   def move_piece(move)
