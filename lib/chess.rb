@@ -21,7 +21,7 @@ class Chess
     initialize_board_values
     initialize_players_pieces
   end
- 
+
   def initialize_board_values
     initialize_pawns
     initialize_bishops
@@ -30,21 +30,21 @@ class Chess
     initialize_queens
     initialize_rooks
   end
-  
+
   def initialize_pawns
     (1..8).each do |i|
       board.values[[7, i]] = Pawn.new(:black)
       board.values[[2, i]] = Pawn.new(:white)
     end
   end
-  
+
   def initialize_bishops
     [3, 6].each do |i|
       board.values[[8, i]] = Bishop.new(:black)
       board.values[[1, i]] = Bishop.new(:white)
     end
   end
-  
+
   def initialize_knights
     [2, 7].each do |i|
       board.values[[8, i]] = Knight.new(:black)
@@ -58,12 +58,12 @@ class Chess
       board.values[[1, i]] = Rook.new(:white)
     end
   end
-  
+
   def initialize_queens
     board.values[[8, 4]] = Queen.new(:black)
     board.values[[1, 4]] = Queen.new(:white)
   end
-  
+
   def initialize_kings
     board.values[[8, 5]] = King.new(:black)
     board.values[[1, 5]] = King.new(:white)
@@ -72,15 +72,11 @@ class Chess
   # game loop
 
   def play
-    until game_over? do
+    until game_over?
       board.draw_board
       display_current_player_move
       player_move
-      # switch_player
-      puts "White"
-      p current_player.pieces
-      puts "Black"
-      p opponent.pieces
+      switch_player
     end
   end
 
@@ -94,16 +90,16 @@ class Chess
     end
   end
 
-  # player pieces 
+  # player pieces
 
   def initialize_players_pieces
-    board.values.select { |key, value| !value.nil? }
-                .select { |key, value| value.color == :white }
-                .each { |key, value| current_player.pieces << value }
-    
-    board.values.select { |key, value| !value.nil? }
-                .select { |key, value| value.color == :black }
-                .each { |key, value| opponent.pieces << value }
+    board.values.reject { |_key, value| value.nil? }
+         .select { |_key, value| value.color == :white }
+         .each { |_key, value| current_player.pieces << value }
+
+    board.values.reject { |_key, value| value.nil? }
+         .select { |_key, value| value.color == :black }
+         .each { |_key, value| opponent.pieces << value }
   end
 
   def remove_piece_from_player(field)
@@ -115,13 +111,12 @@ class Chess
   def player_move
     move = format_input(input_move)
     return player_move if invalid_move?(move)
+
     remove_piece_from_player(move[1]) if opponents_piece_on_field?(move[1])
     move_piece(move)
   end
 
-  def attack_move?(field)
-
-  end
+  def attack_move?(field); end
 
   def move_piece(move)
     board.values[move[1]] = board.values[move[0]].dup
@@ -138,6 +133,7 @@ class Chess
     piece = board.values[move[0]]
     possible_moves = generate_all_possible_moves(move[0], piece)
     return false if possible_moves.include?(move[1])
+
     cannot_move_to_a_field_msg
     true
   end
@@ -151,7 +147,7 @@ class Chess
   end
 
   def generate_moves_for_unlimited_direction(start_position, piece)
-    moves = Array.new
+    moves = []
     piece.move_directions.each { |direction| moves << generate_moves_in_direction(start_position, direction) }
     moves.flatten!(1)
     moves
@@ -159,7 +155,7 @@ class Chess
 
   def generate_moves_in_direction(current_position, direction, moves = [])
     current_position = [current_position[0] + direction[0], current_position[1] + direction[1]]
-    return moves unless current_position.all? { |i| i.between?(1, 8) } 
+    return moves unless current_position.all? { |i| i.between?(1, 8) }
 
     moves << current_position
     return moves unless board.values[current_position].nil?
@@ -168,12 +164,12 @@ class Chess
   end
 
   def generate_moves_for_limited_direction(start_position, piece)
-    moves = Array.new
+    moves = []
     piece.move_directions.each do |i|
       move = [start_position[0] + i[0], start_position[1] + i[1]]
-      moves << move if move.all? { |j| j.between?(1, 8)}
+      moves << move if move.all? { |j| j.between?(1, 8) }
     end
-    if piece.class == Pawn
+    if piece.instance_of?(Pawn)
       moves = modify_pawn_moves(moves)
       (moves = pawn_first_move_option(piece, start_position, moves)) if piece.first_move
     end
@@ -181,7 +177,11 @@ class Chess
   end
 
   def pawn_first_move_option(piece, start_position, moves)
-    (moves << [start_position[0] + (2 * piece.move_directions[0][0]), start_position[1]]) if board.values[[start_position[0] + 2 * piece.move_directions[0][0], start_position[1]]].nil? && board.values[[start_position[0] + piece.move_directions[0][0], start_position[1]]].nil?
+    (moves << [start_position[0] + (2 * piece.move_directions[0][0]), start_position[1]]) if board.values[[
+      start_position[0] + 2 * piece.move_directions[0][0], start_position[1]
+    ]].nil? && board.values[[
+      start_position[0] + piece.move_directions[0][0], start_position[1]
+    ]].nil?
     piece.first_move = false
     moves
   end
@@ -201,20 +201,16 @@ class Chess
   def own_on_field(field)
     if board.values[field].nil?
       false
-    elsif board.values[field].color == current_player.color
-      true
     else
-      false
+      board.values[field].color == current_player.color
     end
   end
 
   def opponents_piece_on_field?(field)
     if board.values[field].nil?
       false
-    elsif board.values[field].color == current_player.color
-      false
     else
-      true
+      board.values[field].color != current_player.color
     end
   end
 
@@ -254,7 +250,7 @@ class Chess
   end
 
   def format_input(input)
-    [[input[0].to_i, turn_char_in_i(input[1])], [input[2].to_i, turn_char_in_i(input[3])] ]
+    [[input[0].to_i, turn_char_in_i(input[1])], [input[2].to_i, turn_char_in_i(input[3])]]
   end
 
   def turn_char_in_i(char)
