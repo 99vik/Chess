@@ -112,6 +112,7 @@ class Chess
     move = format_input(input_move)
     return player_move if invalid_move?(move)
 
+    board.values[move[0]].first_move = false if board.values[move[0]].instance_of?(Pawn)
     remove_piece_from_player(move[1]) if opponents_piece_on_field?(move[1])
     move_piece(move)
   end
@@ -182,7 +183,6 @@ class Chess
     ]].nil? && board.values[[
       start_position[0] + piece.move_directions[0][0], start_position[1]
     ]].nil?
-    piece.first_move = false
     moves
   end
 
