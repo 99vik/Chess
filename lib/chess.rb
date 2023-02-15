@@ -11,6 +11,7 @@ class Chess
   attr_reader :board, :current_player
 
   # game initialization
+
   def initialize
     @board = Board.new
     @player_black = Player.new(:black)
@@ -70,10 +71,10 @@ class Chess
 
   def play
     until game_over? do
-    board.draw_board
-    display_current_player_move
-    player_move
-    switch_player
+      board.draw_board
+      display_current_player_move
+      player_move
+      switch_player
     end
   end
 
@@ -86,17 +87,89 @@ class Chess
   end
 
   # player moves
+
   def player_move
     move = format_input(input_move)
     return player_move if invalid_move?(move)
-    p board.values[move[0]]
-    print move[1]
-    p board.values[move[1]]
+    move_piece(move)
+  end
+
+  def move_piece(move)
+    board.values[move[1]] = board.values[move[0]].dup
+    board.values[move[0]] = nil
   end
 
   def invalid_move?(move)
     return true if wrong_piece_on_movefrom?(move[0])
+    return true if cannot_reach_moveto?(move)
     return true if own_piece_on_moveto?(move[1])
+  end
+
+  def cannot_reach_moveto?(move)
+    piece = board.values[move[0]]
+    possible_moves = generate_all_possible_moves(move[0], piece)
+    return false if possible_moves.include?(move[1])
+    cannot_move_to_a_field_msg
+    true
+  end
+
+  def generate_all_possible_moves(start_position, piece)
+    if !piece.unlimited_move
+      generate_moves_for_limited_direction(start_position, piece)
+    else
+      generate_moves_for_unlimited_direction(start_position, piece)
+    end
+  end
+
+  def generate_moves_for_unlimited_direction(start_position, piece)
+    moves = Array.new
+    piece.move_directions.each { |direction| moves << generate_moves_in_direction(start_position, direction) }
+    moves.flatten!(1)
+    moves
+  end
+
+  def generate_moves_in_direction(current_position, direction, moves = [])
+    current_position = [current_position[0] + direction[0], current_position[1] + direction[1]]
+    return moves unless current_position.all? { |i| i.between?(1, 8) } 
+
+    moves << current_position
+    return moves unless board.values[current_position].nil?
+
+    generate_moves_in_direction(current_position, direction, moves)
+  end
+
+  def generate_moves_for_limited_direction(start_position, piece)
+    moves = Array.new
+    piece.move_directions.each do |i|
+      move = [start_position[0] + i[0], start_position[1] + i[1]]
+      moves << move if move.all? { |j| j.between?(1, 8)}
+    end
+    if piece.class == Pawn
+      moves = modify_pawn_moves(moves)
+    end
+    moves
+  end
+
+  def modify_pawn_moves(moves)
+    wrong_diagonal_moves = moves[1..(moves.length - 1)]
+    wrong_diagonal_moves.each do |i|
+      wrong_diagonal_moves.delete(i) if opponents_piece_on_field?(i)
+    end
+    wrong_diagonal_moves.each do |j|
+      moves.delete(j)
+    end
+    moves.delete_at(0) if opponents_piece_on_field?(moves[0])
+    moves
+  end
+
+  def opponents_piece_on_field?(field)
+    if board.values[field].nil?
+      false
+    elsif board.values[field].color == current_player.color
+      false
+    else
+      true
+    end
   end
 
   def wrong_piece_on_movefrom?(move_from)
@@ -125,6 +198,7 @@ class Chess
   def input_move
     move = gets.strip.downcase.delete(' ').split('')
     return move if valid_input?(move)
+
     wrong_input_msg
     input_move
   end

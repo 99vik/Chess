@@ -12,9 +12,9 @@ class Pawn < Piece
 
   def create_move_direction
     @move_directions = if color == :black
-                         [[-1, 0]]
+                         [[-1, 0], [-1, -1], [-1, 1]]
                        else
-                         [[1, 0]]
+                         [[1, 0], [1, 1], [1, -1]]
                        end
   end
 end
