@@ -146,7 +146,14 @@ class Chess
     end
     if piece.class == Pawn
       moves = modify_pawn_moves(moves)
+      (moves = pawn_first_move_option(piece, start_position, moves)) if piece.first_move
     end
+    moves
+  end
+
+  def pawn_first_move_option(piece, start_position, moves)
+    (moves << [start_position[0] + (2 * piece.move_directions[0][0]), start_position[1]]) if board.values[[start_position[0] + 2 * piece.move_directions[0][0], start_position[1]]].nil? && board.values[[start_position[0] + piece.move_directions[0][0], start_position[1]]].nil?
+    piece.first_move = false
     moves
   end
 
@@ -160,6 +167,16 @@ class Chess
     end
     moves.delete_at(0) if opponents_piece_on_field?(moves[0])
     moves
+  end
+
+  def own_on_field(field)
+    if board.values[field].nil?
+      false
+    elsif board.values[field].color == current_player.color
+      true
+    else
+      false
+    end
   end
 
   def opponents_piece_on_field?(field)

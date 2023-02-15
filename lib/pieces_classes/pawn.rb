@@ -3,10 +3,13 @@
 require_relative '../pieces'
 
 class Pawn < Piece
+  attr_accessor :first_move
+  
   def initialize(color)
     @color = color
     @symbol = UNICODE_PIECES[:pawn][color]
     @unlimited_move = false
+    @first_move = true
     create_move_direction
   end
 
