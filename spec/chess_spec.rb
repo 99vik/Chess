@@ -30,14 +30,17 @@ describe Chess do
     context 'when it is invalid move' do
       it 'move king on unsafe field queen' do
         move = [[2, 2], [3, 3]]
+        allow(chess).to receive(:puts)
         expect(chess.king_to_move_invalid?(move)).to be true
       end
       it 'move king on unsafe field bishop' do
         move = [[2, 2], [3, 2]]
+        allow(chess).to receive(:puts)
         expect(chess.king_to_move_invalid?(move)).to be true
       end
       it 'move king on unsafe field when eats bishop' do
         move = [[2, 2], [3, 2]]
+        allow(chess).to receive(:puts)
         expect(chess.king_to_move_invalid?(move)).to be true
       end
     end

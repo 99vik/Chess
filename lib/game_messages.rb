@@ -12,6 +12,11 @@ module GameMessages
     puts 'Please choose another.'.red
   end
 
+  def wrong_king_field_move_msg
+    puts "Cannot move king to a chosen field!".red
+    puts 'Please choose another.'.red
+  end
+
   def empty_choosen_field_msg
     puts 'Choosen field is empty!'.red
     puts 'Please choose another.'.red

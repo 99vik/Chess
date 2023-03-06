@@ -135,8 +135,10 @@ class Chess
 
   def king_to_move_invalid?(move)
     return false if !board.values[move[0]].instance_of?(King)
-    return true if opponents_all_possible_move_fields.include?(move[1])
-    false
+    return false if !opponents_all_possible_move_fields.include?(move[1])
+
+    wrong_king_field_move_msg
+    true
   end
 
   def opponents_all_possible_move_fields
