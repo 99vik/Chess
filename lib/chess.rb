@@ -112,12 +112,14 @@ class Chess
     move = format_input(input_move)
     return player_move if invalid_move?(move)
 
-    board.values[move[0]].first_move = false if board.values[move[0]].instance_of?(Pawn)
+    check_for_first_move(move)
     remove_piece_from_player(move[1]) if opponents_piece_on_field?(move[1])
     move_piece(move)
   end
 
-  def attack_move?(field); end
+  def check_for_first_move(move)
+    board.values[move[0]].first_move = false if board.values[move[0]].instance_of?(Pawn)
+  end
 
   def move_piece(move)
     board.values[move[1]] = board.values[move[0]].dup
@@ -128,6 +130,21 @@ class Chess
     return true if wrong_piece_on_movefrom?(move[0])
     return true if cannot_reach_moveto?(move)
     return true if own_piece_on_moveto?(move[1])
+    return true if king_to_move_invalid?(move)
+  end
+
+  def king_to_move_invalid?(move)
+    return false if !board.values[move[0]].instance_of?(King)
+    return true if opponents_all_possible_move_fields.include?(move[1])
+    false
+  end
+
+  def opponents_all_possible_move_fields
+    pieces = board.values.reject { |_key, value| value.nil? }
+                  .select { |_key, value| value.color == opponent.color }
+    all_possible_move_fields = []
+    pieces.each { |start_position, piece| all_possible_move_fields << generate_all_possible_moves(start_position, piece) }
+    all_possible_move_fields.flatten(1)
   end
 
   def cannot_reach_moveto?(move)
