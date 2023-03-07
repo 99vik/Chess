@@ -12,6 +12,11 @@ module GameMessages
     puts 'Please choose another.'.red
   end
 
+  def check_msg
+    puts
+    puts 'Check!'.red
+  end
+
   def wrong_king_field_move_msg
     puts "Cannot move king to a chosen field!".red
     puts 'Please choose another.'.red
@@ -23,6 +28,10 @@ module GameMessages
   end
 
   def your_own_piece_on_moveto_msg
+    puts 'Invalid move, protect your king!'.red
+  end
+
+  def check_invalid_move_msg
     puts 'Your own piece is on the field your have chosen to move!'.red
     puts 'Please choose another.'.red
   end

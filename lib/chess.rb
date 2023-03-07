@@ -8,7 +8,7 @@ require_relative 'game_messages'
 # main class for the chess game, unifies all other classes to make working game
 class Chess
   include GameMessages
-  attr_reader :board, :current_player, :opponent
+  attr_reader :board, :current_player, :opponent, :last_move, :check
 
   # game initialization
 
@@ -115,6 +115,27 @@ class Chess
     check_for_first_move(move)
     remove_piece_from_player(move[1]) if opponents_piece_on_field?(move[1])
     move_piece(move)
+    check_for_check(move[1])
+    last_move = move[1]
+  end
+
+  def check_for_check(position)
+    check = false
+    return if !generate_all_possible_moves(position, board.values[position]).include?(find_opponent_king_position) 
+    check_msg
+    check = true
+  end
+
+  def find_opponent_king_position
+    board.values.reject { |_key, value| value.nil? }
+         .select { |_key, value| value.color == opponent.color }
+         .select { |_key, value| value.instance_of?(King) }.keys.flatten(1)
+  end
+
+  def find_player_king_position
+    board.values.reject { |_key, value| value.nil? }
+         .select { |_key, value| value.color == current_player.color }
+         .select { |_key, value| value.instance_of?(King) }.keys.flatten(1)
   end
 
   def check_for_first_move(move)
@@ -131,6 +152,19 @@ class Chess
     return true if cannot_reach_moveto?(move)
     return true if own_piece_on_moveto?(move[1])
     return true if king_to_move_invalid?(move)
+    return true if check_and_invalid_move?(move)
+  end
+
+  def check_and_invalid_move?(move)
+    return false if check == false
+    
+    move_piece(move)
+    invalid = opponents_all_possible_move_fields.include?(find_player_king_position)
+    move_piece(move.reverse)
+    return false if !invalid
+
+    check_invalid_move_msg
+    true
   end
 
   def king_to_move_invalid?(move)
@@ -257,7 +291,7 @@ class Chess
   end
 
   def input_move
-    move = gets.strip.downcase.delete(' ').split('')
+    move = STDIN.gets.strip.downcase.delete(' ').split('')
     return move if valid_input?(move)
 
     wrong_input_msg
@@ -277,7 +311,8 @@ class Chess
   end
 
   def game_over?
-    false
+    return false if check == false
+
   end
 
   def display_current_player_move
