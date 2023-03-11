@@ -20,6 +20,7 @@ class Chess
     @opponent = @player_black
     initialize_board_values
     initialize_players_pieces
+    @check = false
   end
 
   def initialize_board_values
@@ -120,10 +121,10 @@ class Chess
   end
 
   def check_for_check(position)
-    check = false
+    @check = false
     return if !generate_all_possible_moves(position, board.values[position]).include?(find_opponent_king_position) 
     check_msg
-    check = true
+    @check = true
   end
 
   def find_opponent_king_position
@@ -152,18 +153,16 @@ class Chess
     return true if cannot_reach_moveto?(move)
     return true if own_piece_on_moveto?(move[1])
     return true if king_to_move_invalid?(move)
-    return true if check_and_invalid_move?(move)
+    return true if leaving_king_unprotected?(move)
   end
 
-  def check_and_invalid_move?(move)
-    return false if check == false
-    
+  def leaving_king_unprotected?(move)
     move_piece(move)
     invalid = opponents_all_possible_move_fields.include?(find_player_king_position)
     move_piece(move.reverse)
-    return false if !invalid
+    return false unless invalid
 
-    check_invalid_move_msg
+    leaving_king_unprotected_msg
     true
   end
 
@@ -312,7 +311,34 @@ class Chess
 
   def game_over?
     return false if check == false
+    return true if cannot_protect_king?
+    false
+  end
 
+  def cannot_protect_king?
+    return true if king_cant_move_to_safe_field? && cannot_attack_last_position? && cannot_block_last_position?
+  end
+
+  def king_cant_move_to_safe_field?
+    moves = generate_all_possible_moves(find_player_king_position, board.values[find_opponent_king_position])
+    moves = remove_same_color_pieces_positions(moves, current_player.color)
+    p moves.all? { |position| opponents_all_possible_move_fields.include?(position) }
+    moves.all? { |position| opponents_all_possible_move_fields.include?(position) }
+  end
+
+  def remove_same_color_pieces_positions(positions, color)
+    positions = positions.select do |position|
+      board.values[position].nil? || board.values[position].color != color
+    end
+    positions
+  end
+
+  def cannot_attack_last_position?
+    false
+  end
+
+  def cannot_block_last_position?
+    false
   end
 
   def display_current_player_move
