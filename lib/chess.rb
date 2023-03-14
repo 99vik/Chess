@@ -117,7 +117,7 @@ class Chess
     remove_piece_from_player(move[1]) if opponents_piece_on_field?(move[1])
     move_piece(move)
     check_for_check(move[1])
-    last_move = move[1]
+    @last_move = move[1]
   end
 
   def check_for_check(position)
@@ -316,13 +316,13 @@ class Chess
   end
 
   def cannot_protect_king?
+    p cannot_attack_last_position?
     return true if king_cant_move_to_safe_field? && cannot_attack_last_position? && cannot_block_last_position?
   end
 
   def king_cant_move_to_safe_field?
     moves = generate_all_possible_moves(find_player_king_position, board.values[find_opponent_king_position])
     moves = remove_same_color_pieces_positions(moves, current_player.color)
-    p moves.all? { |position| opponents_all_possible_move_fields.include?(position) }
     moves.all? { |position| opponents_all_possible_move_fields.include?(position) }
   end
 
@@ -334,7 +334,32 @@ class Chess
   end
 
   def cannot_attack_last_position?
+    generate_all_player_moves_without_king.none? { |piece_and_moves| check_if_attack_is_possible_if_king_is_unprotected(piece_and_moves[0], piece_and_moves[1]) }
+  end
+
+  def check_if_attack_is_possible_if_king_is_unprotected(start_position, moves)
+    return true if move_possible_and_doesnt_open_king?(start_position, moves)
     false
+  end
+
+  def move_possible_and_doesnt_open_king?(start_position, moves)
+    return false if !moves.include?(last_move)
+    start_position_piece = board.values[start_position]
+    last_move_piece = board.values[last_move]
+    move = [start_position, last_move]
+    move_piece(move)
+    king_opened = opponents_all_possible_move_fields.include?(find_player_king_position)
+    board.values[start_position] = start_position_piece
+    board.values[last_move] = last_move_piece
+    !king_opened
+  end 
+
+  def generate_all_player_moves_without_king
+    pieces = board.values.reject { |_key, value| value.nil? || value.instance_of?(King) }
+                  .select { |_key, value| value.color == current_player.color }
+    all_possible_move_fields = []
+    pieces.each { |start_position, piece| all_possible_move_fields << [start_position, generate_all_possible_moves(start_position, piece)] }
+    all_possible_move_fields
   end
 
   def cannot_block_last_position?
