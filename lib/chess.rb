@@ -82,7 +82,7 @@ class Chess
     board.draw_board
     announce_winner
   end
-
+  
   def announce_winner
     switch_player
     puts

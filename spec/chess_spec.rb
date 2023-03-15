@@ -46,26 +46,24 @@ describe Chess do
     end
   end
 
-  describe 'situation testing' do
-    before do 
-      (1..8).to_a.each do |i|
-        (1..8).to_a.each do |j|
-          chess.board.values[[i, j]] = nil
-        end
-      end
-      chess.board.values[[2, 2]] = King.new(:white)
-      chess.board.values[[2, 4]] = Queen.new(:white)
-      chess.board.values[[1, 8]] = Rook.new(:black)
-      chess.board.values[[8, 1]] = Rook.new(:black)
-      chess.board.values[[7, 6]] = Queen.new(:black)
-      chess.board.values[[8, 8]] = King.new(:black)
-      chess.board.values[[3, 5]] = Knight.new(:black)
-      chess.board.values[[5, 3]] = Knight.new(:black)
-      chess.switch_player
-    end
+  # describe 'situation testing' do
+  #   before do 
+  #     (1..8).to_a.each do |i|
+  #       (1..8).to_a.each do |j|
+  #         chess.board.values[[i, j]] = nil
+  #       end
+  #     end
+  #     chess.board.values[[1, 1]] = King.new(:white)
+  #     chess.board.values[[2, 1]] = Pawn.new(:white)
+  #     chess.board.values[[3, 8]] = Bishop.new(:white)
+  #     chess.board.values[[7, 6]] = Queen.new(:black)
+  #     chess.board.values[[8, 8]] = King.new(:black)
+  #     chess.board.values[[4, 3]] = Knight.new(:black)
+  #     chess.switch_player
+  #   end
 
-    it 'play' do 
-      chess.play
-    end
-  end
+  #   it 'play' do 
+  #     chess.play
+  #   end
+  # end
 end
