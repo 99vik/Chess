@@ -54,14 +54,13 @@ describe Chess do
         end
       end
       chess.board.values[[2, 2]] = King.new(:white)
-      chess.board.values[[3, 6]] = Rook.new(:white)
       chess.board.values[[2, 4]] = Queen.new(:white)
       chess.board.values[[1, 8]] = Rook.new(:black)
       chess.board.values[[8, 1]] = Rook.new(:black)
-      chess.board.values[[4, 3]] = Queen.new(:black)
-      chess.board.values[[2, 8]] = Rook.new(:black)
+      chess.board.values[[7, 6]] = Queen.new(:black)
       chess.board.values[[8, 8]] = King.new(:black)
-      chess.board.values[[6, 6]] = Bishop.new(:black)
+      chess.board.values[[3, 5]] = Knight.new(:black)
+      chess.board.values[[5, 3]] = Knight.new(:black)
       chess.switch_player
     end
 

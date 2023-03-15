@@ -157,9 +157,11 @@ class Chess
   end
 
   def leaving_king_unprotected?(move)
+    temp_second_piece = board.values[move[1]]
     move_piece(move)
     invalid = opponents_all_possible_move_fields.include?(find_player_king_position)
     move_piece(move.reverse)
+    board.values[move[1]] = temp_second_piece
     return false unless invalid
 
     leaving_king_unprotected_msg
@@ -312,12 +314,14 @@ class Chess
   def game_over?
     return false if check == false
     return true if cannot_protect_king?
+
     false
   end
 
   def cannot_protect_king?
-    p cannot_attack_last_position?
     return true if king_cant_move_to_safe_field? && cannot_attack_last_position? && cannot_block_last_position?
+
+    false
   end
 
   def king_cant_move_to_safe_field?
@@ -339,11 +343,13 @@ class Chess
 
   def check_if_attack_is_possible_if_king_is_unprotected(start_position, moves)
     return true if move_possible_and_doesnt_open_king?(start_position, moves)
+
     false
   end
 
   def move_possible_and_doesnt_open_king?(start_position, moves)
     return false if !moves.include?(last_move)
+
     start_position_piece = board.values[start_position]
     last_move_piece = board.values[last_move]
     move = [start_position, last_move]
