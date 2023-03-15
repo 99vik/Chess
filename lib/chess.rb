@@ -129,10 +129,24 @@ class Chess
     opponent.pieces.delete(board.values[field])
   end
 
+  # bot move
+
+  def generate_random_move(all_values)
+    pieces = all_values.reject { |_key, value| value.nil? || value.color != :black}
+    all_possible_move_fields = []
+    pieces.each { |start_position, piece| all_possible_move_fields << [start_position, generate_all_possible_moves(start_position, piece)] }
+    move = all_possible_move_fields.sample
+    move = [move[0], move[1].sample]
+  end
+
   # player moves
 
   def player_move
-    move = format_input(input_move)
+    if current_player.instance_of?(Player)
+      move = format_input(input_move)
+    else
+      move = generate_random_move(board.values)
+    end
     return player_move if invalid_move?(move)
 
     check_for_first_move(move)
@@ -186,7 +200,7 @@ class Chess
     board.values[move[1]] = temp_second_piece
     return false unless invalid
 
-    leaving_king_unprotected_msg
+    leaving_king_unprotected_msg if current_player.instance_of?(Player)
     true
   end
 
@@ -194,7 +208,7 @@ class Chess
     return false if !board.values[move[0]].instance_of?(King)
     return false if !opponents_all_possible_move_fields.include?(move[1])
 
-    wrong_king_field_move_msg
+    wrong_king_field_move_msg if current_player.instance_of?(Player)
     true
   end
 
@@ -211,7 +225,7 @@ class Chess
     possible_moves = generate_all_possible_moves(move[0], piece)
     return false if possible_moves.include?(move[1])
 
-    cannot_move_to_a_field_msg
+    cannot_move_to_a_field_msg if current_player.instance_of?(Player)
     true
   end
 
@@ -295,7 +309,7 @@ class Chess
       empty_choosen_field_msg
       true
     elsif board.values[move_from].color != current_player.color
-      wrong_choosen_color_field_msg
+      wrong_choosen_color_field_msg if current_player.instance_of?(Player)
       true
     else
       false
@@ -306,7 +320,7 @@ class Chess
     if board.values[move_to].nil?
       false
     elsif board.values[move_to].color == current_player.color
-      your_own_piece_on_moveto_msg
+      your_own_piece_on_moveto_msg if current_player.instance_of?(Player)
       true
     else
       false
