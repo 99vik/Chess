@@ -3,6 +3,11 @@
 require_relative 'colorize'
 
 module GameMessages
+  def choose_game_mode_msg
+    puts "Type 1 for HUMAN VS HUMAN."
+    puts "Type 2 for HUMAN VS BOT."
+  end
+  
   def wrong_input_msg
     puts 'Wrong input!'.red
   end

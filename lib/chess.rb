@@ -2,6 +2,7 @@
 
 require_relative 'board'
 require_relative 'player'
+require_relative 'bot'
 require_relative 'pieces'
 require_relative 'game_messages'
 
@@ -14,13 +15,26 @@ class Chess
 
   def initialize
     @board = Board.new
-    @player_black = Player.new(:black)
     @player_white = Player.new(:white)
+    choose_game_mode
     @current_player = @player_white
     @opponent = @player_black
     initialize_board_values
     initialize_players_pieces
     @check = false
+  end
+  
+  def choose_game_mode
+    choose_game_mode_msg
+    gm_input = gets.strip.downcase.delete(' ')
+    if gm_input == '1'
+      @player_black = Player.new(:black)
+    elsif gm_input == '2'
+      @player_black = Bot.new(:black)
+    else
+      wrong_input_msg
+      return choose_game_mode
+    end
   end
 
   def initialize_board_values
@@ -82,7 +96,7 @@ class Chess
     board.draw_board
     announce_winner
   end
-  
+
   def announce_winner
     switch_player
     puts
