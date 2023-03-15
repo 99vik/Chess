@@ -79,6 +79,14 @@ class Chess
       player_move
       switch_player
     end
+    board.draw_board
+    announce_winner
+  end
+
+  def announce_winner
+    switch_player
+    puts
+    puts "#{current_player.color.capitalize} wins!"
   end
 
   def switch_player
@@ -369,7 +377,34 @@ class Chess
   end
 
   def cannot_block_last_position?
-    false
+    return true if board.values[last_move].unlimited_move == false
+
+    generate_fields_between_piece_and_king(last_move, board.values[last_move]).none? { |field_between| can_move_your_piece_on_it?(field_between) } 
+  end
+
+  def can_move_your_piece_on_it?(field)
+    generate_all_player_moves_without_king.any? do |start_pos_and_moves|
+    start_position = start_pos_and_moves[0]
+    moves = start_pos_and_moves[1]
+    moves.include?(field) && can_move_on_field_without_opening_king?(start_position, field)
+    end
+  end
+
+  def can_move_on_field_without_opening_king?(start_position, field)
+    move = [start_position, field]
+    move_piece(move)
+    king_opened = opponents_all_possible_move_fields.include?(find_player_king_position)
+    move_piece(move.reverse)
+    !king_opened
+  end
+
+  def generate_fields_between_piece_and_king(start_position, piece)
+    moves = []
+    piece.move_directions.each { |direction| moves << generate_moves_in_direction(start_position, direction) }
+    moves = moves.select { |fields_array| fields_array.include?(find_player_king_position) }
+                 .flatten(1) 
+    moves.delete(find_player_king_position)
+    moves                  
   end
 
   def display_current_player_move
