@@ -10,7 +10,7 @@ Any types of illegal moves which are not allowed within standard game rules, or 
 Game winning algorithm automatically detects when king is pinned and if there are no possible moves to protect him, game is finished and winner is announced.¸
 
 Enabled special moves :
-- possible 2 move for pawn's first move
+- possible 2 field jump for pawn's first move
 
 Special moves that need to get implemented:
 - en passant

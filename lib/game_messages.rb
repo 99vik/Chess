@@ -7,7 +7,13 @@ module GameMessages
     puts "Type 1 for HUMAN VS HUMAN."
     puts "Type 2 for HUMAN VS BOT."
   end
-  
+
+  def announce_winner_msg(winner)
+    puts 
+    puts "#{winner} wins!".green
+    puts
+  end
+
   def wrong_input_msg
     puts 'Wrong input!'.red
   end

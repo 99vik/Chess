@@ -84,6 +84,12 @@ class Chess
     board.values[[1, 5]] = King.new(:white)
   end
 
+  # game saving
+
+  def save_game
+    
+  end
+
   # game loop
 
   def play
@@ -99,8 +105,8 @@ class Chess
 
   def announce_winner
     switch_player
-    puts
-    puts "#{current_player.color.capitalize} wins!"
+    winner = current_player.color.capitalize
+    announce_winner_msg(winner) 
   end
 
   def switch_player
@@ -136,7 +142,7 @@ class Chess
     all_possible_move_fields = []
     pieces.each { |start_position, piece| all_possible_move_fields << [start_position, generate_all_possible_moves(start_position, piece)] }
     move = all_possible_move_fields.sample
-    move = [move[0], move[1].sample]
+    [move[0], move[1].sample]
   end
 
   # player moves

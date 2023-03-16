@@ -10,14 +10,19 @@ class String
     colorize(107)
   end
 
+  
   def gray_bg
     colorize(100)
   end
-
+  
   def brown_bg
     colorize(43)
   end
-
+  
+  def green
+    colorize(32)
+  end
+  
   def brown
     colorize(33)
   end
