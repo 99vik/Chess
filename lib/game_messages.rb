@@ -6,6 +6,11 @@ module GameMessages
   def choose_game_mode_msg
     puts "Type 1 for HUMAN VS HUMAN."
     puts "Type 2 for HUMAN VS BOT."
+    puts "Type 3 to load previous game."
+  end
+
+  def choose_save_msg
+    print "\nChoose name of a file to load:"
   end
 
   def announce_winner_msg(winner)

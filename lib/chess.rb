@@ -19,11 +19,6 @@ class Chess
     @board = Board.new
     @player_white = Player.new(:white)
     choose_game_mode
-    @current_player = @player_white
-    @opponent = @player_black
-    initialize_board_values
-    initialize_players_pieces
-    @check = false
   end
   
   def choose_game_mode
@@ -31,12 +26,24 @@ class Chess
     gm_input = gets.strip.downcase.delete(' ')
     if gm_input == '1'
       @player_black = Player.new(:black)
+      initialize_all_variable_new_game
     elsif gm_input == '2'
       @player_black = Bot.new(:black)
+      initialize_all_variable_new_game
+    elsif gm_input == '3'
+      load_game
     else
       wrong_input_msg
       return choose_game_mode
     end
+  end
+  
+  def initialize_all_variable_new_game
+    @current_player = @player_white
+    @opponent = @player_black
+    initialize_board_values
+    initialize_players_pieces
+    @check = false
   end
 
   def initialize_board_values
@@ -86,7 +93,47 @@ class Chess
     board.values[[1, 5]] = King.new(:white)
   end
 
-  # game saving
+  # game saving and loading
+
+  def load_game
+    show_shaved_games
+    choose_save_to_load
+    exit
+  end
+
+  def choose_save_to_load
+    choose_save_msg
+    name = gets.strip
+    begin
+      choosen_save = JSON.load File.open("./saves/#{name}.json", 'r')
+    rescue
+      puts "#{name} save doesn't exist."
+      choose_save_to_load
+    else
+      load_values_from_save(choosen_save)
+    end
+  end
+
+  def load_values_from_save(save)
+    puts "loaded"
+    @board.values = save['board_values']
+    save['bot'] ? @player_black = Bot.new(:black) : @player_black = Player.new(:black)
+    if save['current_player'] == 'white'
+      @current_player = @player_white
+      @opponent = @player_black
+    else
+      @current_player = @player_black
+      @opponent = @player_white
+    end
+    @last_move = save['last_move']
+    @check = save['check']
+  end
+
+  def show_shaved_games
+    print "\nSaved games: "
+    saved_file_names = Dir.entries('saves').select { |name| name.include?('.json') }
+    puts saved_file_names.map { |name| name.delete_suffix('.json') }.join(', ')
+  end
 
   def save_game
     begin
@@ -96,6 +143,10 @@ class Chess
       choose_different_save_name_msg
       save_game
     else
+      board_values_json = board.values.to_json
+      current_player_json = current_player.color.to_json
+      opponent_json = opponent.color.to_json
+      bot_json = @player_black.instance_of?(Bot)
       save_template = ERB.new File.read('./lib/save_template.erb')
       save = save_template.result(binding)
       file.write(save)
