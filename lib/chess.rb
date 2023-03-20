@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'erb'
+require 'json'
 require_relative 'board'
 require_relative 'player'
 require_relative 'bot'
@@ -87,7 +89,25 @@ class Chess
   # game saving
 
   def save_game
-    
+    begin
+      path = "./saves/#{choose_save_name}.json"
+      file = File.open(path, 'w')
+    rescue Exception => e
+      choose_different_save_name_msg
+      save_game
+    else
+      save_template = ERB.new File.read('./lib/save_template.erb')
+      save = save_template.result(binding)
+      file.write(save)
+      game_saved_msg
+      exit
+    end
+  end
+
+  def choose_save_name
+    choose_save_name_msg
+    name = gets.strip
+    name
   end
 
   # game loop
@@ -335,6 +355,7 @@ class Chess
 
   def input_move
     move = STDIN.gets.strip.downcase.delete(' ').split('')
+    return save_game if move.join('') == 'save'
     return move if valid_input?(move)
 
     wrong_input_msg

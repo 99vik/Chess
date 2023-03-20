@@ -23,6 +23,20 @@ module GameMessages
     puts 'Please choose another.'.red
   end
 
+  def choose_different_save_name_msg
+    puts
+    puts "Error creating save.".red
+    puts "Please choose different save name."
+  end
+
+  def game_saved_msg
+    puts "\nGame successfully saved!\n".green
+  end
+
+  def choose_save_name_msg
+    print "\nEnter save name:"
+  end
+
   def check_msg
     puts
     puts 'Check!'.red
