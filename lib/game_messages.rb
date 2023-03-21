@@ -13,6 +13,10 @@ module GameMessages
     print "\nChoose name of a file to load:"
   end
 
+  def game_loaded_msg
+    puts "Game loaded!\n".green
+  end
+
   def announce_winner_msg(winner)
     puts 
     puts "#{winner} wins!".green

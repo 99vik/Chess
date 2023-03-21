@@ -98,7 +98,7 @@ class Chess
   def load_game
     show_shaved_games
     choose_save_to_load
-    exit
+    game_loaded_msg
   end
 
   def choose_save_to_load
@@ -115,8 +115,7 @@ class Chess
   end
 
   def load_values_from_save(save)
-    puts "loaded"
-    @board.values = save['board_values']
+    load_board_values(save['board_values'])
     save['bot'] ? @player_black = Bot.new(:black) : @player_black = Player.new(:black)
     if save['current_player'] == 'white'
       @current_player = @player_white
@@ -127,6 +126,20 @@ class Chess
     end
     @last_move = save['last_move']
     @check = save['check']
+  end
+
+  def load_board_values(board_values_json)
+    board_values_json.each do |key, values|
+      key = JSON.parse key
+      board.values[key] = nil if values.nil?
+      next if values.nil?
+      piece = Object.const_get(values["piece"]) 
+      color = values["color"] == 'white' ? :white : :black
+      board.values[key] = piece.new(color)
+      if piece == Pawn
+        board.values[key].first_move = values["first_move"]
+      end
+    end
   end
 
   def show_shaved_games
@@ -143,16 +156,35 @@ class Chess
       choose_different_save_name_msg
       save_game
     else
-      board_values_json = board.values.to_json
+      board_values_json = generate_json_board_values
       current_player_json = current_player.color.to_json
       opponent_json = opponent.color.to_json
       bot_json = @player_black.instance_of?(Bot)
+      last_move_json = last_move.nil? ? nil.to_json : last_move
       save_template = ERB.new File.read('./lib/save_template.erb')
       save = save_template.result(binding)
       file.write(save)
       game_saved_msg
       exit
     end
+  end
+
+  def generate_json_board_values
+    board_values = Hash.new
+    board.values.each do |key, values|
+      if values.nil?
+        board_values[key] = nil
+      else
+        board_values[key] = {
+                        piece: values.class.name,
+                        color: values.color
+                      }
+        if values.instance_of?(Pawn)
+          board_values[key][:first_move] = values.first_move
+        end
+      end
+    end
+    board_values.to_json
   end
 
   def choose_save_name
