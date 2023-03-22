@@ -23,7 +23,7 @@ Anytime during the game, players can save the game by typing 'save' in the conso
 At the beginning player can choose an option to load previously saved games, that displays the names of all currently saved json files. Typing the name of the selected save loads json file and continues the game from the moment it was saved.
 
 ## How to play
-The oard consists of horizontal rows labeled with numbers from 1 to 8 and vertical columns labeled with letters from a to b.
+The board consists of horizontal rows labeled with numbers from 1 to 8 and vertical columns labeled with letters from a to b.
 The player can choose his move by first writing a value of row and column of the piece he wishes to move, then writing row and column of the field he wants to move the piece to.
 Examples: "2a 3a", "4D6F"
 The player can type 'help' during game to show the instructions.
