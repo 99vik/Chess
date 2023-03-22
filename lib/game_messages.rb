@@ -9,6 +9,15 @@ module GameMessages
     puts "Type 3 to load previous game."
   end
 
+  def instructions
+    puts "\nHOW TO PLAY\n".blue
+    puts "Player can choose his move by first writing a value of row and column of the piece he wishes to move,\nthen writing row and coluwm of the field he wants to move piece to.\nFor example: '2a 3a', '4D6F'"
+    puts "You can save and quit anytime during the game by typing 'save'."
+    puts "To display instructions during game, type 'help'."
+    puts "\nPress enter to continue.."
+    gets
+  end
+
   def choose_save_msg
     print "\nChoose name of a file to load:"
   end

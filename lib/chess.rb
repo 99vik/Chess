@@ -18,6 +18,7 @@ class Chess
   def initialize
     @board = Board.new
     @player_white = Player.new(:white)
+    instructions
     choose_game_mode
   end
   
@@ -439,6 +440,12 @@ class Chess
   def input_move
     move = STDIN.gets.strip.downcase.delete(' ').split('')
     return save_game if move.join('') == 'save'
+    if move.join('') == 'help'
+      instructions
+      board.draw_board
+      display_current_player_move
+      return input_move
+    end
     return move if valid_input?(move)
 
     wrong_input_msg

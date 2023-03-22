@@ -27,6 +27,10 @@ class String
     colorize(33)
   end
 
+  def blue
+    colorize(34)
+  end
+
   def black
     colorize(30)
   end
