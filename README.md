@@ -1,4 +1,9 @@
+![chess1](https://github.com/99vik/Chess/assets/106154264/0cecece2-85e4-4abd-a12a-7064a5c57484)
+
+![chess2](https://github.com/99vik/Chess/assets/106154264/977f9f42-4372-478c-8d0c-a97a8a877b83)
+
 # CLI Ruby Chess Game
+
 This is the last ruby project from Odin Project's course on ruby. Takes all the learned concepts and sums it into a single most extensive project 
 of the course.
 
